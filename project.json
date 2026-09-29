@@ -1,0 +1,10 @@
+{
+  "sourceId": "mcp-zh",
+  "sourceName": "MCP 中文源",
+  "workerName": "mcp-zh",
+  "databaseName": "mcp-zh",
+  "publicUrl": null,
+  "accountId": null,
+  "deployedAt": null,
+  "seedUrl": "https://github.com/mycatxl/mcp-zh/releases/download/data-latest/import.sql.gz"
+}

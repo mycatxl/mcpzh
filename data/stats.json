@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-09-28T18:35:42.507Z",
+  "contentHash": "46e836835708b4c4",
+  "rawRecords": 36888,
+  "entries": 34279,
+  "dropped": 2599,
+  "dropReasons": {
+    "no installable package or public https remote": 2599
+  },
+  "duplicateIds": 10,
+  "duplicateExamples": [
+    "ai.getvda/llm-observability-orchestration-agent-langchain-community  ==  ai.getvda/llm-observability-orchestration-agent-langchain",
+    "ai.getvda/rabbitmq-elasticsearch-postgres-stack-generator-mongo  ==  ai.getvda/rabbitmq-elasticsearch-postgres-stack-generator-elasticsearch-elasticsearch",
+    "com.a2awire/benchmark-ap-exception-review-2026-09-10-run-037bea  ==  com.a2awire/benchmark-ap-exception-review-2026-09-10-ad46e3f1",
+    "com.a2awire/benchmark-ap-exception-review-2026-09-10-run-13e274  ==  com.a2awire/benchmark-ap-exception-review-2026-09-10-ad46e3f1",
+    "com.trycloudflare.candy-josh-writers-balance/yultrace-bounty-feed  ==  com.trycloudflare.candy-josh-writers-balance/yultrace-audit",
+    "io.github.Clocknext/mcp  ==  io.github.ClockNext/mcp",
+    "io.github.Zuga-luga/zugabot  ==  io.github.Zuga-luga/Zugabot",
+    "io.github.aggrete/aggrete  ==  io.github.Aggrete/aggrete",
+    "io.github.dfch/biz.dfch.specmgr  ==  io.github.dfch/biz-dfch-specmgr",
+    "io.github.sceneview/mcp  ==  io.github.SceneView/mcp"
+  ],
+  "withoutTitle": 0,
+  "withoutDescription": 0,
+  "categories": {
+    "devtools": 23807,
+    "web": 5356,
+    "productivity": 3112,
+    "data": 1582,
+    "docs": 422
+  },
+  "servedBytes": 31021877,
+  "avgBytesPerRecord": 905,
+  "responseBytesPerPage": 90500,
+  "statementBytesCap": 92160,
+  "writes": {
+    "estimated": 68558,
+    "dailyBudget": 100000,
+    "rowsWrittenPerEntry": 2,
+    "basis": "calibrated against a real D1 import (see measure-writes.js)"
+  },
+  "translation": {
+    "hit": 57039,
+    "miss": 0,
+    "chars": 0,
+    "requests": 0,
+    "failed": 0,
+    "cacheSize": 57046
+  }
+}
