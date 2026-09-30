@@ -134,7 +134,27 @@ console.log('\n3) seed url -> manifest url');
   );
 
   const manifest = seedManifestUrl(project);
-  check('manifest sits beside the archive', manifest === 'https://github.com/mycatxl/mcp-zh/releases/download/data-latest/MANIFEST.json', manifest ?? '(null)');
+  // The repository itself is deliberately NOT pinned here. A fork, or a
+  // deployment checkout created by the Deploy button, publishes its own
+  // release and points seedUrl at that — the refresh workflow's publish step
+  // uploads to whichever repository it runs in, because GITHUB_TOKEN cannot
+  // write to a different one. Asserting the canonical URL would therefore
+  // fail a correctly-configured deployment. What has to hold is the SHAPE: a
+  // tag-pinned release download whose filename is swapped for MANIFEST.json.
+  check(
+    'manifest sits beside the archive',
+    /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/releases\/download\/[^/\s]+\/MANIFEST\.json$/.test(manifest ?? ''),
+    manifest ?? '(null)',
+  );
+  // And the canonical URL must survive in DEFAULTS, since that is what a
+  // fresh clone with no project.json inherits — otherwise a fork would have
+  // no dataset to download at all.
+  const projectSrc = read('scripts/lib/project.mjs');
+  check(
+    'the shipped default still points at the canonical dataset',
+    projectSrc.includes('https://github.com/mycatxl/mcp-zh/releases/download/data-latest/import.sql.gz'),
+    'inherited by a fresh clone that has no project.json',
+  );
   check('manifest derivation is a pure sibling swap', manifest === seed.replace(/[^/]+$/, 'MANIFEST.json'));
   check('no seed url -> null, not a broken url', seedManifestUrl({ seedUrl: null }) === null);
 }
@@ -296,12 +316,15 @@ console.log('\n8) --check does not write wrangler.toml');
 // The gate has to cover BOTH steps. The schema DROPs and recreates the tables,
 // so skipping the import while still applying the schema would leave a live
 // marketplace serving from an empty database — worse than the wasted budget.
+//
+// The schema and the data now travel as ONE file, which is the stronger form of
+// the same rule: a failure between the DROP and the INSERTs is impossible.
 console.log('\n9) identical content is not re-imported');
 {
   const src = read('scripts/deploy.mjs');
   const gateAt = src.indexOf('let reimport = !SKIP_IMPORT');
   const skipAt = src.indexOf('if (!reimport) {', gateAt);
-  const schemaAt = src.indexOf("step(4, 'applying schema", gateAt);
+  const bundleAt = src.indexOf("step(4, 'bundling", gateAt);
   const importAt = src.indexOf('`importing ${importMb', gateAt);
 
   check('the gate exists', gateAt !== -1);
@@ -312,11 +335,12 @@ console.log('\n9) identical content is not re-imported');
   // the SAME gate, so neither can run without the other.
   check('a skip branch exists', skipAt !== -1 && skipAt > gateAt);
   check(
-    'the schema runs only when the gate says re-import',
-    schemaAt !== -1 && skipAt < schemaAt,
+    'the schema is bundled with the data, not applied on its own',
+    bundleAt !== -1 && skipAt < bundleAt && /readFileSync\(SCHEMA_SQL/.test(src),
     'applying the schema without the import would empty the live database',
   );
-  check('the import runs after the schema, in the same branch', importAt !== -1 && schemaAt < importAt);
+  check('no separate schema call survives', !/--file=\$\{SCHEMA_SQL\}/.test(src));
+  check('the import runs after the bundle, in the same branch', importAt !== -1 && bundleAt < importAt);
   check('the skip branch says the database is untouched', /the database is left exactly as it is/.test(src));
 
   // A missing hash must mean "import". The first run has no meta table at all,

@@ -82,15 +82,24 @@ PI-Desktop 市场 ── 加一个源
 
 ## 已知问题：市场手动加源会丢
 
-PI-Desktop 的 MCP 市场有个 bug：「添加源」只改内存，**从不写入存储**，重启后消失。
+PI-Desktop 的 MCP 市场有两个问题：
 
-绕过方法：
+1. 「添加源」只改内存，**从不写入存储**，重启后消失。
+2. 它是**追加**到列表末尾的，而官方源不可移除 —— 所以就算能存下来，官方源也永远排在最前面，你看到的还是英文。
+
+市场的合并顺序**就是源数组的顺序**，所以必须把中文源写在**数组第一位**。UI 做不到，只能直接写存储：
 
 1. 设置 → 常规 → 打开「**开发者模式**」
 2. 按 **F12** 打开控制台
-3. 执行 `node scripts/make-snippet.mjs`，把打印出的那一行粘进去回车
+3. 生成那一行代码，粘进去回车：
+
+```bash
+node scripts/make-snippet.mjs --url=https://你的地址.workers.dev
+```
 
 应输出 `mcp-zh > official` —— 表示中文源排在官方源**前面**，中文卡片才会出现在市场首页。
+
+> 用 `--url` 是因为**一键部署的地址不在仓库里**：Cloudflare 是在它自己的构建目录里写 `project.json` 的，不会推回仓库。只给域名也行，脚本会自动补 `/servers`。
 
 ---
 
@@ -103,6 +112,7 @@ PI-Desktop 的 MCP 市场有个 bug：「添加源」只改内存，**从不写�
 | 去重 | 10 条（id 派生后重复） |
 | **对外提供** | **34,279 条** |
 | 翻译 | 59,985 段文本，0 失败 |
+| 标题里残留普通英文词 | 从 3,327 条降到 **1,481 条**（−55.5%） |
 | 分类 | devtools 23,807 / web 5,356 / productivity 3,112 / data 1,582 / docs 422 |
 | 导入写入 | 68,564 行（D1 日额度的 69%） |
 | 每页体积 | ~90 KB（4 MB 上限的 46 倍余量） |
@@ -125,10 +135,11 @@ test/                    测试
 ## 开发
 
 ```bash
-npm test                  # 全部测试
-npm run fetch             # 抓官方全量（约 19 分钟）
-npm run translate         # 翻译并生成 data/import.sql
-npm run verify            # 用真实 SQLite 全量校验
+npm test                     # 全部测试（239 项断言）
+npm run fetch                # 抓官方全量（约 19 分钟）
+npm run word-stats           # 从语料重建"普通词 vs 品牌"词表
+npm run translate            # 翻译并生成 data/import.sql
+npm run verify               # 用真实 SQLite 全量校验
 node test/e2e.js --base=https://<你的 Worker>.workers.dev
 ```
 

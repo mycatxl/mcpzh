@@ -123,7 +123,7 @@ console.log('\n5) the exact strings the host compares');
   check('our url is https', stored[0].url.startsWith('https://'), stored[0].url);
 }
 
-console.log('\n6) the committed snippet file matches the generator');
+console.log('\n6) the local snippet file, when present, matches the generator');
 {
   const snippetPath = path.join(ROOT, 'docs', 'console-snippet.txt');
   if (!URL_) {
@@ -132,7 +132,12 @@ console.log('\n6) the committed snippet file matches the generator');
     // deploy, and a stale one is gitignored rather than committed.
     console.log('  SKIP  snippet file check (project.json has no publicUrl yet)');
   } else if (!fs.existsSync(snippetPath)) {
-    check('docs/console-snippet.txt exists', false, 'run: node scripts/make-snippet.mjs --write');
+    // The file is gitignored, so a fresh clone — and Cloudflare's build
+    // checkout, which is the whole one-click path — never has one. Its
+    // absence is the normal state, not a failure. Where it DOES exist, it is
+    // compared below, and that comparison is what catches a snippet left over
+    // from a previous URL.
+    console.log('  SKIP  snippet file check (not generated on this checkout)');
   } else {
     const doc = fs.readFileSync(snippetPath, 'utf8').trim();
     check('exists and is one line', !doc.includes('\n'), `${doc.length} chars`);
@@ -143,6 +148,20 @@ console.log('\n6) the committed snippet file matches the generator');
     check('is idempotent by construction', doc.includes(`s.id!=='${PROJECT.sourceId}'`));
     check('points at the deployed url', doc.includes(URL_), URL_);
   }
+}
+
+// ---- the --url flag ------------------------------------------------------
+// The deployed URL is only recorded when a deploy runs on this machine. A
+// one-click deploy runs in Cloudflare's checkout, which never pushes
+// project.json back, so the repository copy has no URL and the generator would
+// refuse to run for the person who most needs it.
+console.log('\nsource: the --url override');
+{
+  const src = fs.readFileSync(path.join(ROOT, 'scripts', 'make-snippet.mjs'), 'utf8');
+  check('accepts --url', /--url=/.test(src));
+  check('trims trailing slashes', /replace\(\/\\\/\+\$\/, ''\)/.test(src));
+  check('appends /servers when only the origin is given', /!\/\\\/servers\$\/\.test\(URL_\)/.test(src));
+  check('rejects anything that is not an https /servers endpoint', /expected something like/.test(src));
 }
 
 console.log('\n--------------------------------------------');
