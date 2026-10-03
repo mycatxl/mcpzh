@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-02T09:58:12.960Z",
-  "contentHash": "12b262a6cebc72a9",
-  "rawRecords": 38340,
-  "entries": 35668,
-  "dropped": 2662,
+  "generatedAt": "2026-10-03T09:34:32.845Z",
+  "contentHash": "54583424a9fe81b4",
+  "rawRecords": 38718,
+  "entries": 36031,
+  "dropped": 2677,
   "dropReasons": {
-    "no installable package or public https remote": 2662
+    "no installable package or public https remote": 2677
   },
   "duplicateIds": 10,
   "duplicateExamples": [
@@ -23,35 +23,35 @@
   "withoutTitle": 0,
   "withoutDescription": 0,
   "categories": {
-    "devtools": 24722,
-    "web": 5601,
-    "productivity": 3261,
-    "data": 1637,
-    "docs": 447
+    "devtools": 24951,
+    "web": 5676,
+    "productivity": 3300,
+    "data": 1652,
+    "docs": 452
   },
-  "servedBytes": 32272223,
+  "servedBytes": 32599917,
   "avgBytesPerRecord": 905,
   "responseBytesPerPage": 90500,
   "statementBytesCap": 92160,
   "writes": {
-    "estimated": 71336,
+    "estimated": 72062,
     "dailyBudget": 100000,
     "rowsWrittenPerEntry": 2,
     "basis": "calibrated against a real D1 import (see measure-writes.js)"
   },
   "translation": {
-    "hit": 0,
-    "miss": 47073,
-    "chars": 3267162,
-    "requests": 1571,
+    "hit": 46909,
+    "miss": 702,
+    "chars": 50891,
+    "requests": 25,
     "failed": 0,
     "routes": {
-      "en": 58497,
-      "auto": 912,
-      "han": 231
+      "en": 59193,
+      "auto": 922,
+      "han": 238
     },
     "detectedEnglish": 52,
-    "secondChance": 967,
-    "cacheSize": 47073
+    "secondChance": 978,
+    "cacheSize": 47775
   }
 }
